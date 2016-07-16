@@ -1,0 +1,76 @@
+﻿@model IEnumerable<MvcEditModal.Models.Student>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstMidName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EnrollmentDate)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.LastName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FirstMidName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EnrollmentDate)
+        </td>
+        <td>
+            @* Button to invoke modal *@
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal" data-id="@item.ID">Edit</button>
+        </td>
+    </tr>
+}
+
+</table>
+
+@* Edit modal with content placeholder *@
+@section editmodal
+{
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            </div>
+        </div>
+    </div>
+}
+
+@* Script to modify content of modal by retrieving html from partial view  *@
+@section editmodaljs
+{
+    <script type="text/javascript">
+        $('#editModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget)
+            var itemID = button.data('id')
+            $.ajax({
+                url: '/Students/EditStudent/' + itemID,
+                type: 'GET',
+                success: function (data) {
+                    var m = $('#editModal');
+                    m.find('.modal-content').html(data);
+                    m.modal('show');
+                },
+                cache: false
+            });
+        })
+    </script>
+}
